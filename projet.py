@@ -27,8 +27,6 @@ frequence = np.arange(1, 100000, 1000)          #domaine d`étude frequentiel
 
 ### Etude asymptotique
 
-## (fait par Nhat-nam)
-
 # Fonctions de conversion
 def no_div_by_0(arr):
     # Remplace les 0 par un epsilon dans un array
