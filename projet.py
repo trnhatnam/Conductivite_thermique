@@ -25,7 +25,7 @@ bh = np.array([5e-6, 10e-6, 15e-6, 20e-6])      #demi largeur du resistor
 frequence = np.arange(1, 100000, 1000)          #domaine d`étude frequentiel
 
 
-### Etude asymptotique
+#Etude asymptotique
 
 # Fonctions de conversion
 def no_div_by_0(arr):
