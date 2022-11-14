@@ -69,7 +69,7 @@ for b in bh:
     #plt.plot(ln2w, moduleDeltaAc2*np.sin(argDeltaAc2), '-.') # quadrature haute fréquence
 
 
-# Quadrature basse fréquence
+# Quadrature basse fréquence (indépendant de b)
 ax1.plot(ln2w, moduleDeltaAc*np.sin(argDeltaAc), '--', label="en quadrature")
 
 # Profondeur de pénétration
