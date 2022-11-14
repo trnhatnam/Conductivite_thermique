@@ -29,7 +29,7 @@ frequence = np.arange(1, 100000, 1000)          #domaine d`étude frequentiel
 
 # Fonctions de conversion
 def no_div_by_0(arr):
-    # Remplace les 0 par un epsilon dans un array
+    # Remplace les 0 par un epsilon dans l'array
     cp = arr.copy()
     for (i,donnee) in enumerate(arr):
         if abs(donnee) < sys.float_info.epsilon:
