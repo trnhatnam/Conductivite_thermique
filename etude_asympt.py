@@ -39,17 +39,17 @@ def no_div_by_0(arr):
 def lamb_2_ln2w(lamb):
     # Pronfdeur de pénétration -> ln(2w)
     lamb = no_div_by_0(lamb)
-    return np.log(D/(lamb*lamb))
+    return np.log(D/(lamb*lamb*1e-12)) # chgmt en micromètres
 
 def ln2w_2_lamb(ln2w):
-    # ln(2w) -> Profondeur de pénétration
+    # ln(2w) -> Profondeur de pénétration (en µm)
     ln2w = no_div_by_0(ln2w)
-    return np.sqrt(D/np.exp(ln2w))
+    return np.sqrt(D/np.exp(ln2w))/(1e-6) # idem
 
 # Plot pour la basse fréquence
 fig, ax1 = plt.subplots()
 pulsation = 2*np.pi*frequence
-ln2w = np.log(2*pulsation)
+ln2w = np.log(4*pulsation) # pulsation thermique  = 2 * pulsation électrique
 eps = 0.923
 
 for b in bh:
@@ -74,7 +74,7 @@ ax1.plot(ln2w, moduleDeltaAc*np.sin(argDeltaAc), '--', label="en quadrature")
 
 # Profondeur de pénétration
 ax2 = ax1.secondary_xaxis('top', functions=(ln2w_2_lamb, lamb_2_ln2w)) 
-ax2.set_xlabel('Profondeur de pénétration (en m)')
+ax2.set_xlabel('Profondeur de pénétration (en µm)')
 ax2.invert_xaxis() # pas linéairement indépendant à ln2w
 ln2w_ticks = ax1.get_xticks()
 lamb_ticks = ln2w_2_lamb(ln2w_ticks) # coincider ln(2w) avec la profondeur de pénétration
