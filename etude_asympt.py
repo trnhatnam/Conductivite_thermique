@@ -15,7 +15,7 @@ TCR = 0.00253   # coefficient de temperature resistor (Au) - (intrinsèque au ma
 L = 0.002       # longueur du resistor
 V0 = 1          # pic de tension fondamental
 R0 = 80         # R resistor à temperature ambiante
-P = 1         # pissance par unité de longueur (w/m)
+P = V0**2/(2*R0)         # puissance par unité de longueur (w/m)
 
 gamma = 0.5772  #constante d`Euler
 
