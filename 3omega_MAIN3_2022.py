@@ -35,7 +35,7 @@ gamma = 0.5772  #constante d`Euler
 #variables
 ts = np.array([350e-6, 400e-6])                         # epaisseur du substrat
 bh = np.array([5e-6, 10e-6, 20e-6])      #demi largeur du resistor
-frequence = np.arange(1, 1000, 200)          #domaine d`étude frequentiel
+frequence = np.arange(1, 5000, 200)          #domaine d`étude frequentiel
 
 # Cartesian product of input variables
 idx = pd.MultiIndex.from_product([bh, ts, frequence], names=["bh", "ts", "frequence"])
@@ -63,16 +63,59 @@ def f_u(omega_elem):
 
 
 # return a tuple of array. Remember to assign two otypes.
-f_u_vec = np.vectorize(f_u, otypes=[np.complex128,      # MeijerG is complex number ou Simpson
-                                    np.complex128,      # asympt is complex number
-                                    np.ndarray,         # amplitude is array
-                                    np.ndarray,         # phase is array
-                                    np.complex128,      # V3omega_asympt is complex number
-                                    np.complex128]      # V3omega is complex number issu de MeijerG ou Simpson
-                                    )
+# f_u_vec = np.vectorize(f_u, otypes=[np.complex128,      # MeijerG is complex number ou Simpson
+#                                     np.complex128,      # asympt is complex number
+#                                     np.ndarray,         # amplitude is array
+#                                     np.ndarray,         # phase is array
+#                                     np.complex128,      # V3omega_asympt is complex number
+#                                     np.complex128]      # V3omega is complex number issu de MeijerG ou Simpson
+#                                     )
 
-tup = f_u_vec(omega)                    # tuple of arrays: (val1, asympt, amplitude, phase, V3omega_asympt, V3omega)
-print(tup[3])
+#tup = f_u_vec(omega) # tuple of arrays: (val1, asympt, amplitude, phase, V3omega_asympt, V3omega)
+
+############## Fait par TRINH Nhat-nam
+## partie calcul
+f_u_vec2 = np.vectorize(f_u, otypes=[np.complex128, np.complex128]) # juste pour tester le traçage asymptotique
+tup = f_u_vec2(omega) # maitenant, tup : (asympt, V3omega_asympt)
+
+# extraction de la partie réel de l'asymptote
+asympt = tup[0]
+moduleT = np.abs(asympt)
+argT = np.angle(asympt)
+deltaT = moduleT*np.cos(argT)
+
+# choix du tracé : on demande une valeur pour b et ts
+print("Options pour b :", bh)
+choixB = int(input("Avec quelle valeur de b voulez-vous travailler (tapez l'indice du b dans le tableau ci-dessus) ? : "))
+print("Options pour ts :", ts)
+choixTs = int(input("Avec quelle valeur de ts voulez-vous travailler (tapez l'indice de ts dans le tableau ci-dessus) ? : "))
+
+# extraction des valeurs qui vont nous intéresser
+choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[choixTs])].tolist() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
+omegaEtude = np.take(omega, choixIdx)
+tempMoyEtude = np.take(deltaT, choixIdx)
+
+## partie plot
+def omg2lamb(omg):
+    # omega -> Profondeur de pénétration (en µm)
+    return np.sqrt((bh[choixB]**2)/(2*omg))/(1e-6)
+
+fig, ax1 = plt.subplots()
+
+# traçage de l'asymptote
+plt.semilogx(omegaEtude, tempMoyEtude, linestyle="--", label="température moyenne") # traçage semilog en x
+plt.title("Approximation de la température moyenne à basse fréquence en fonction de omega")
+plt.xlabel("Omega")
+plt.ylabel("Température moyenne (en °C)")
+
+# ajout de la profondeur de pénétration comme deuxième abscisse x
+ax2 = ax1.twiny()
+ax2.invert_xaxis()
+ax2.set_xlabel("Profondeur de pénétration en µm")
+ax2.semilogx(omg2lamb(omegaEtude), tempMoyEtude)
+
+ax1.legend()
+plt.show()
 
 # retracer les asymptotes suivant le format defini ici ----> me faire un retour sur le tracé asymptotique
 # ajouter la fonction MeijerG dans la methode f_u _ utiliser la librairie MeijerG comprendre les coefficients.
