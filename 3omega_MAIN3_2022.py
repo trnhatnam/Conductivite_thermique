@@ -56,7 +56,7 @@ def f_u(omega_elem):
     V3omega_asympt = 0.5 * V0 * TCR * asympt    # calculate thrid harmonic from DT
 ###Rizlaine MeijerG piste incomplet
     MeijerG = -((j*P)/(4*math.pi*k*omega) * 
-    # (1/(2*math.pi*j))*intégrale de (  ( ((2-x)-1)!*((3-x)-1)!*((4-x)-1)!*((-1+x)-1)!* )/ ( ((-2+x)-1)!*((-3+x)-1)!*?? l'indice n+1 est supérieur à p donc le dernier produit ,n'est pas possible
+    # (1/(2*math.pi*j))*intégrale de (  ( ((1-x)-1)!*((1-x)-1)!*(x-1)!*(((-1/2)+x)-1)!* )/ ( ((1/2+x)-1)!*((1+x)-1)!*?? )  )  ici n+1 vaut 3 et p vaut 2 donc produit impossible?
 ##Fonction gamma dans MeijerG = (n-1)! ?
     #faire les calculs ici : amplitude , phase, V3omega
 
