@@ -54,12 +54,13 @@ def f_u(omega_elem):
      
     asympt = (P / (k*L*math.pi)) * (-(1 / 2) * np.log(omega_elem) + 3 / 2 - gamma - j * ((math.pi) / 4))
     V3omega_asympt = 0.5 * V0 * TCR * asympt    # calculate thrid harmonic from DT
-
-    #ajouter fonctions exacxtes calculée en fonction de MeijerG ou Simpson
-
+###Rizlaine MeijerG piste incomplet
+    MeijerG = -((j*P)/(4*math.pi*k*omega) * 
+    # (1/(2*math.pi*j))*intégrale de (  ( ((2-x)-1)!*((3-x)-1)!*((4-x)-1)!*((-1+x)-1)!* )/ ( ((-2+x)-1)!*((-3+x)-1)!*?? l'indice n+1 est supérieur à p donc le dernier produit ,n'est pas possible
+##Fonction gamma dans MeijerG = (n-1)! ?
     #faire les calculs ici : amplitude , phase, V3omega
 
-    return asympt, V3omega_asympt   #ajouter fle retour des calculs
+    return MeijerG, asympt, V3omega_asympt   #ajouter fle retour des calculs
 
 
 # return a tuple of array. Remember to assign two otypes.
