@@ -53,16 +53,21 @@ T_depth = (np.sqrt(2*D / (2 * (math.pi) * thermal_freq)))/1e-6                  
 def f_u(omega_elem):
      
     asympt = (P / (k*L*math.pi)) * (-(1 / 2) * np.log(omega_elem) + 3 / 2 - gamma - j * ((math.pi) / 4))
-    V3omega_asympt = 0.5 * V0 * TCR * asympt    # calculate thrid harmonic from DT
 
     #ajouter fonctions exacxtes calculée en fonction de MeijerG ou Simpson
+    # meijerg
+    val1 = (-j*P / (4*L*k*math.pi * omega_elem)) * meijerg([[1, 3 / 2], []], [[1, 1], [0.5, 0]], j * omega_elem)  #solution approximée via fnction MeijerG on recupere reel et imaginaire
 
     #faire les calculs ici : amplitude , phase, V3omega
+    amplitude = math.sqrt(np.real(val1) ** 2 + np.imag(val1) ** 2)
+    phase = math.degrees(math.atan(np.imag(val1) / np.real(val1)))
+    V3omega_asympt = 0.5 * V0 * TCR * asympt                                        # calculate thrid harmonic from DT
+    V3omega = 0.5 * V0 * TCR * val1            
 
-    return asympt, V3omega_asympt   #ajouter fle retour des calculs
+    return val1, asympt, amplitude, phase, V3omega, V3omega_asympt   #ajouter fle retour des calculs
 
 
-# return a tuple of array. Remember to assign two otypes.
+#return a tuple of array. Remember to assign two otypes.
 f_u_vec = np.vectorize(f_u, otypes=[np.complex128,      # MeijerG is complex number ou Simpson
                                     np.complex128,      # asympt is complex number
                                     np.ndarray,         # amplitude is array
@@ -71,9 +76,81 @@ f_u_vec = np.vectorize(f_u, otypes=[np.complex128,      # MeijerG is complex num
                                     np.complex128]      # V3omega is complex number issu de MeijerG ou Simpson
                                     )
 
-tup = f_u_vec(omega)                    # tuple of arrays: (val1, asympt, amplitude, phase, V3omega_asympt, V3omega)
-print(tup[3])
+tup = f_u_vec(omega) # tuple of arrays: (val1, asympt, amplitude, phase, V3omega_asympt, V3omega)
+meij, asympt, amplitude, phase, V3omega, V3omega_asympt  = tup
+
+### Fait par Nhat-nam le 18/12
+# temp vs freq_elec
+for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
+    # extraction des valeurs qui vont nous intéresser
+    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
+    omegaEtude = np.take(omega, choixIdx)
+    deltaT_in_M = np.take(np.real(meij), choixIdx)
+    deltaT_out_M = np.take(np.imag(meij), choixIdx)
+    
+    frequence_elec = (omegaEtude*D)/(4*np.pi*bh[choixB]**2) # on revient à la fréquence électrique à partir de omega
+    plt.semilogx(frequence_elec, deltaT_in_M)
+
+plt.title("delta_T en fonction de la frequence électrique")
+plt.xlabel("Frequence électrique")
+plt.ylabel("Température moyenne (en °C)")
+plt.show()
+
+# temp vs frequence thermique
+for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
+    # extraction des valeurs qui vont nous intéresser
+    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
+    omegaEtude = np.take(omega, choixIdx)
+    deltaT_in_M = np.take(np.real(meij), choixIdx)
+    deltaT_out_M = np.take(np.imag(meij), choixIdx)
+    
+    frequence_elec = (omegaEtude*D)/(2*np.pi*bh[choixB]**2) # on revient à la fréquence thermique à partir de omega
+    plt.semilogx(frequence_elec, deltaT_in_M)
+
+plt.title("delta_T en fonction de la frequence thermique")
+plt.xlabel("Frequence thermique")
+plt.ylabel("Température moyenne (en °C)")
+plt.show()
+
+# V3omega
+for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
+    # extraction des valeurs qui vont nous intéresser
+    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
+    omegaEtude = omega
+    V3omega_in = np.real(V3omega)
+    plt.loglog(omega, V3omega_in)
+
+
+plt.title("V3omega en fonction de omega")
+plt.xlabel("omega")
+plt.ylabel("v3omega")
+plt.show()
+
+# amplitude et phase en fonction de la frequence
+fig, ax1 = plt.subplots()
+for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
+    # extraction des valeurs qui vont nous intéresser
+    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
+    omegaEtude = np.take(omega, choixIdx)
+    ampEtude = np.take(amplitude, choixIdx)
+    phaseEtude = np.take(phase, choixIdx)
+    
+    frequence_elec = (omegaEtude*D)/(2*np.pi*bh[choixB]**2) # on revient à la fréquence electrique à partir de omega
+    ax1.semilogx(frequence_elec, ampEtude, color="red", label="amplitude")
+    ax1.set_xlabel("frequence électrique")
+    ax1.set_ylabel("amplitude")
+    ax2 = ax1.twinx()
+    ax2.semilogx(frequence_elec, phaseEtude, color="green", label="phase")
+    ax2.set_ylabel("phase")
+
+plt.title("amplitude et phase en fonction de la frequence electrique")
+ax1.legend()
+ax2.legend(loc="center right")
+plt.show()
+
+
 
 # retracer les asymptotes suivant le format defini ici ----> me faire un retour sur le tracé asymptotique
 # ajouter la fonction MeijerG dans la methode f_u _ utiliser la librairie MeijerG comprendre les coefficients.
 # integration numerique via Simpsom dans f_u ou separemment
+

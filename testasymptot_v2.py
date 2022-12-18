@@ -81,6 +81,8 @@ f_u_vec = np.vectorize(f_u, otypes=[np.complex128,      # MeijerG is complex num
 tup = f_u_vec(omega) # tuple of arrays: (val1, asympt, amplitude, phase, V3omega_asympt, V3omega)
 meij, asympt = tup[0], tup[1]
 
+fig, ax1 = plt.subplots()
+
 for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
     # extraction des valeurs qui vont nous intéresser
     choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
@@ -98,11 +100,17 @@ for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les
     plt.semilogx(omegaEtude, deltaT_in_M, linewidth=1.25, label="meijerg in phase b = " + str(bh[choixB]))
     plt.semilogx(omegaEtude, deltaT_out_M, linewidth=1.25, label="meijerg out phase b = " + str(bh[choixB]))
 
-plt.title("Asymptotes de la température moyenne à basse fréquence en fonction de omega")
-plt.xlabel("Omega")
-plt.ylabel("Température moyenne (en °C)")
+# ajout du t_depth
+T_depth = np.sqrt(D/(2*thermal_freq))
+ax2 = ax1.twiny()
+ax2.semilogx()
+ax2.set_xticks(T_depth)
 
-plt.legend()
+plt.title("Asymptotes de la température moyenne à basse fréquence en fonction de omega")
+ax1.xlabel("Omega")
+ax1.ylabel("Température moyenne (en °C)")
+
+ax1.legend()
 plt.show()
 ####
 # retracer les asymptotes suivant le format defini ici ----> me faire un retour sur le tracé asymptotique
