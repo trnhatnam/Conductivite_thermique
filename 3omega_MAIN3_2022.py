@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 from mpl_toolkits.mplot3d import axes3d
-%matplotlib qt
+%matplotlib qt # nécessaire pour Spyder, vous pouvez enlever sur Vscode
 
 
 # pip install matplotlib
