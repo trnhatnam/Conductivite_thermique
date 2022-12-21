@@ -9,6 +9,7 @@ https://github.com/trnhatnam/Conductivite_thermique/blob/etude_asymptotique/proj
 J'ai affiché seulement les asymptotes à haute fréquence pour tous les demi-largeurs données pour éviter de surchager le graphique. J'ai inclus les asymptotes à basse fréquence (mais les lignes concernées sont mis en commentaire dans le code pour la raison ci-dessus).
 
 Accès complet à la branche "étude asymptotique" : https://github.com/trnhatnam/Conductivite_thermique/tree/etude_asymptotique
+
 -------------------------------------------------------
 
 16/11/2022
@@ -33,6 +34,7 @@ mes listes de parametres d`entrees.
 on peut se voir en presentiel de 8.30-10.30 lundi 21 sinon il faut qu on se parle la semaine prochaine d`une maniere ou d`une autre avant mon depart.
 
 ----------------------------------------------------
+
 28/11/2022
 
 Bonjour, voici le code avec l'étude asymptotique : https://github.com/trnhatnam/Conductivite_thermique/blob/main/3omega_MAIN3_2022.py
@@ -54,12 +56,15 @@ Explications pour les fonctions :
 Il manque le traçage des asymptotes à haute fréquence car ce que j'ai tracé est seulement l'asymptote à basse fréquence. Je vais laisser les autres prendre soin de faire cette partie si on doit la faire aussi.
 
 TRINH Nhat-nam MAIN3
+
 ---------------------------------------------------
 
 29/11/2022
 
 Bonjour, oui mais pourquoi demander des entrées? il ne s`agit pas de choisir en amont mais de tracer en fonction de b et ts de telle sorte à observer les zones d`interet et faire un choix judicieux.
 c est d`ailleurs l`interet d`avoir vectorisé. completer avec les autres asymptotes et tracer l`ensemble pour une valeur de ts (car toutes les ts en 2D cela encombrera le graph, on essaiera en 3D ou contour plus tard)
+
+---------------------------
 
 1/12/2022
 
@@ -72,10 +77,10 @@ voir librairie MeijerG python
     V3omega = 0.5 * V0 * TCR * val1                                                 # calculate thrid harmonic from DT
 
 
-# lire librairie MeijerG
-# à faire : superposer la solution MeijerG sur les asymptotes --  tracer la figure
-#tracer Temp vs freq elect, Temp vs freq ther, V3omega, amplitude et phase vs freq (1 axe y pour phase et 1 axe y pour amplitude) 
-# faire solution integration numerique: Simpson
+- lire librairie MeijerG
+- à faire : superposer la solution MeijerG sur les asymptotes --  tracer la figure
+- tracer Temp vs freq elect, Temp vs freq ther, V3omega, amplitude et phase vs freq (1 axe y pour phase et 1 axe y pour amplitude) 
+- faire solution integration numerique: Simpson
 
 prevoir un Zoom le 6/12  avancer sur integration numerique
 
@@ -92,19 +97,24 @@ J'ai retiré la profondeur de pénétration comme le b est susceptible d'évolue
 abscisse.
 
 TRINH Nhat-nam MAIN3
+
 ----------------------------------------------------------------
+
 5/12/2022
 pas mal ca prend forme. tacher de comprendre lìmplementation des fonctions hypergeometriques en quoi elles sont interessantes pour nous (solution analytique de
 l`integrale complexe à comparer avec Simpson integration numerique).
 remarque: pourquoi dites vous que T_depth ne peut pas etre placée ? elle ne depend pas de b juste de la frequence et de la diffusivité constante intrinseque au materiau.
 je propose que nous fassions le suivi de projet sur le Github vous pouvez svp transferer tous les elements dessus refs codes..etc. je mettrai mes commentaires en issue#
+
 -------
 
 13/12/2022
 Il me semble qu'on peut seulement mettre du code sur github donc j'ai mis les deux fichiers .py
 https://github.com/trnhatnam/Conductivite_thermique/tree/main
 J'aurai besoin de votre nom github pour pouvoir vous ajouter dans la liste des collaborateurs.
+
 ------------
+
 13/12/2022
 voici mon login: mpbt2022
 il faut que l`on fasse un point avant la fin de semaine
