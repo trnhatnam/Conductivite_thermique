@@ -3,6 +3,9 @@ import numpy as np
 import math
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+from mpl_toolkits.mplot3d import axes3d
+%matplotlib qt
 
 
 # pip install matplotlib
@@ -77,80 +80,53 @@ f_u_vec = np.vectorize(f_u, otypes=[np.complex128,      # MeijerG is complex num
                                     )
 
 tup = f_u_vec(omega) # tuple of arrays: (val1, asympt, amplitude, phase, V3omega_asympt, V3omega)
-meij, asympt, amplitude, phase, V3omega, V3omega_asympt  = tup
 
-### Fait par Nhat-nam le 18/12
-# temp vs freq_elec
-for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
-    # extraction des valeurs qui vont nous intéresser
-    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
-    omegaEtude = np.take(omega, choixIdx)
-    deltaT_in_M = np.take(np.real(meij), choixIdx)
-    deltaT_out_M = np.take(np.imag(meij), choixIdx)
-    
-    frequence_elec = (omegaEtude*D)/(4*np.pi*bh[choixB]**2) # on revient à la fréquence électrique à partir de omega
-    plt.semilogx(frequence_elec, deltaT_in_M)
+df['Thermal_freq'] = thermal_freq       # Insert thermal frequency into data frame
+df['T_depth'] = T_depth                 # Insert thermal penetration depth into data frame
+df["Re"] = np.real(tup[0])              # Insert val1 real part into data frame
+df["Im"] = np.imag(tup[0])              # Insert val1 imagine part into data frame
+df["Asympt_Re"] = np.real(tup[1])       # Insert asympt real part into data frame
+df["Asympt_Im"] = np.imag(tup[1])       # Insert asympt imagine part into data frame
+df['Amplitude'] = tup[2]                # Insert amplitude into data frame
+df['Phase'] = tup[3]                    # Insert phase into data frame
+df["V3asympt_Re"] = np.real(tup[4])     # Insert V3omega_asympt real part into data frame
+df["V3asympt_Im"] = np.imag(tup[4])     # Insert V3omega_asympt imagine part into data frame
+df["V3_Re"] = np.real(tup[5])           # Insert V3omega real part into data frame
+df["V3_Im"] = np.imag(tup[5])           # Insert V3omega imagine part into data frame
 
-plt.title("delta_T en fonction de la frequence électrique")
-plt.xlabel("Frequence électrique")
-plt.ylabel("Température moyenne (en °C)")
+# sauvegarde des resultats dans un fichier .csv generé selon bh
+for bh_elem in bh:
+    fname = f"bh={bh_elem:.4e}.csv"
+    df_save = df[(df["bh"] == bh_elem)]
+    df_save.to_csv(fname)
+
+# température vs fréquence électrique vs t_depth
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.set_xlabel('frequence électrique en Hz')
+ax.set_ylabel('température en K')
+ax.set_zlabel('t_depth en µm')
+cl = ["black","blue","green"]
+t = ts[0]
+for b in bh:  
+    # partie reel
+    ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
+            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
+            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+            linewidth=0.75, 
+            zdir="z",
+            label="b="+str(b),
+            color = cl[np.where(bh == b)[0][0]])
+    # partie imaginaire
+    ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
+                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
+                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+                linewidth=0.75, 
+                zdir="z",
+                linestyle='--',
+                color=cl[np.where(bh == b)[0][0]])
+
+ax.set_title('Température vs fréquence électrique vs T_depth')
+ax.legend()
 plt.show()
-
-# temp vs frequence thermique
-for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
-    # extraction des valeurs qui vont nous intéresser
-    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
-    omegaEtude = np.take(omega, choixIdx)
-    deltaT_in_M = np.take(np.real(meij), choixIdx)
-    deltaT_out_M = np.take(np.imag(meij), choixIdx)
-    
-    frequence_elec = (omegaEtude*D)/(2*np.pi*bh[choixB]**2) # on revient à la fréquence thermique à partir de omega
-    plt.semilogx(frequence_elec, deltaT_in_M)
-
-plt.title("delta_T en fonction de la frequence thermique")
-plt.xlabel("Frequence thermique")
-plt.ylabel("Température moyenne (en °C)")
-plt.show()
-
-# V3omega
-for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
-    # extraction des valeurs qui vont nous intéresser
-    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
-    omegaEtude = omega
-    V3omega_in = np.real(V3omega)
-    plt.loglog(omega, V3omega_in)
-
-
-plt.title("V3omega en fonction de omega")
-plt.xlabel("omega")
-plt.ylabel("v3omega")
-plt.show()
-
-# amplitude et phase en fonction de la frequence
-fig, ax1 = plt.subplots()
-for choixB in range(0,1): # remplacer par range(bh.size) pour parcourir tous les b (attention c'est illisible)
-    # extraction des valeurs qui vont nous intéresser
-    choixIdx = df.index[(df["bh"] == bh[choixB])&(df["ts"]==ts[0])].to_numpy() # retourne les index des lignes qui vérifient b = bh[choixTs] et ts = ts[choixTs]
-    omegaEtude = np.take(omega, choixIdx)
-    ampEtude = np.take(amplitude, choixIdx)
-    phaseEtude = np.take(phase, choixIdx)
-    
-    frequence_elec = (omegaEtude*D)/(2*np.pi*bh[choixB]**2) # on revient à la fréquence electrique à partir de omega
-    ax1.semilogx(frequence_elec, ampEtude, color="red", label="amplitude")
-    ax1.set_xlabel("frequence électrique")
-    ax1.set_ylabel("amplitude")
-    ax2 = ax1.twinx()
-    ax2.semilogx(frequence_elec, phaseEtude, color="green", label="phase")
-    ax2.set_ylabel("phase")
-
-plt.title("amplitude et phase en fonction de la frequence electrique")
-ax1.legend()
-ax2.legend(loc="center right")
-plt.show()
-
-
-
-# retracer les asymptotes suivant le format defini ici ----> me faire un retour sur le tracé asymptotique
-# ajouter la fonction MeijerG dans la methode f_u _ utiliser la librairie MeijerG comprendre les coefficients.
-# integration numerique via Simpsom dans f_u ou separemment
 
