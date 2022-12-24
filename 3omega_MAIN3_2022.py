@@ -4,8 +4,8 @@ import math
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
-from mpl_toolkits.mplot3d import axes3d
-%matplotlib qt # nécessaire pour Spyder, vous pouvez enlever sur Vscode
+from mpl_toolkits.mplot3d import Axes3D
+%matplotlib qt
 
 
 # pip install matplotlib
@@ -100,14 +100,17 @@ for bh_elem in bh:
     df_save = df[(df["bh"] == bh_elem)]
     df_save.to_csv(fname)
 
+t = ts[0]
+cl = ["black","blue","green", "red", "orange", "brown"]
+
 # température vs fréquence électrique vs t_depth
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.set_xlabel('frequence électrique en Hz')
 ax.set_ylabel('température en K')
 ax.set_zlabel('t_depth en µm')
-cl = ["black","blue","green"]
-t = ts[0]
+ax.invert_zaxis()
+ax.margins(x=0)
 for b in bh:  
     # partie reel
     ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
@@ -126,7 +129,88 @@ for b in bh:
                 linestyle='--',
                 color=cl[np.where(bh == b)[0][0]])
 
+ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([1.15, 1.15, 1.15, 1]))
+
 ax.set_title('Température vs fréquence électrique vs T_depth')
 ax.legend()
+plt.show()
+
+# température vs fréquence thermique vs t_depth
+fig1 = plt.figure()
+ax1 = fig1.add_subplot(111, projection='3d')
+ax1.set_xlabel('frequence thermique en Hz')
+ax1.set_ylabel('température en K')
+ax1.set_zlabel('t_depth en µm')
+ax1.invert_zaxis()
+ax1.margins(x=0)
+for b in bh:  
+    # partie reel
+    ax1.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
+            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
+            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+            linewidth=0.75, 
+            zdir="z",
+            label="b="+str(b),
+            color = cl[np.where(bh == b)[0][0]])
+    # partie imaginaire
+    ax1.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
+                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
+                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+                linewidth=0.75, 
+                zdir="z",
+                linestyle='--',
+                color=cl[np.where(bh == b)[0][0]])
+
+ax1.get_proj = lambda: np.dot(Axes3D.get_proj(ax1), np.diag([1.15, 1.15, 1.15, 1]))
+
+ax1.set_title('Température vs fréquence thermique vs T_depth')
+ax1.legend()
+plt.show()
+
+# V3omega vs frequence thermique vs t_depth
+fig2 = plt.figure()
+ax2 = fig2.add_subplot(111, projection='3d')
+ax2.set_xlabel('frequence thermique en Hz')
+ax2.set_ylabel('V3omega')
+ax2.set_zlabel('t_depth en µm')
+ax2.invert_zaxis()
+ax2.margins(x=0)
+for b in bh:  
+    # partie reel
+    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Re'],
+            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
+            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+            linewidth=0.75, 
+            zdir="z",
+            label="V3_reel b="+str(b),
+            color = cl[np.where(bh == b)[0][0]])
+    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Re'],
+                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
+                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+                linewidth=0.75, 
+                zdir="z",
+                linestyle='--',
+                color=cl[np.where(bh == b)[0][0]])
+    # partie imaginaire
+    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Im'],
+            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
+            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+            linewidth=0.75, 
+            zdir="z",
+            label="V3_im b="+str(b),
+            color = cl[np.where(bh == b)[0][0]+3])
+    
+    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Im'],
+                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
+                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+                linewidth=0.75, 
+                zdir="z",
+                linestyle='--',
+                color=cl[np.where(bh == b)[0][0]+3])
+
+ax2.get_proj = lambda: np.dot(Axes3D.get_proj(ax2), np.diag([1.15, 1.15, 1.15, 1]))
+
+ax2.set_title('V3_omega vs fréquence thermique vs T_depth')
+ax2.legend()
 plt.show()
 
