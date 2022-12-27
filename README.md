@@ -119,4 +119,10 @@ J'aurai besoin de votre nom github pour pouvoir vous ajouter dans la liste des c
 voici mon login: mpbt2022
 il faut que l`on fasse un point avant la fin de semaine
 
+27/12/2022
+redaction du rapport attention sources
+partage des taches pour la redaction et la presentation :coordination importante et equilibre
+finaliser 2 courbes 2D cas extremes : une hors epaisseur substrat et une dedans
+essayer d integrer Simpsonen lieu et place de MeijerG sinon juste prendre MeijerG et Simpson et les comparer juste T vs Freq pour 2 bh et 1 ts pour observer la precision entre les 2
+pour Tfilm mince essayer de le comprendre mais on reprend ca le 3 ensemble.
 
