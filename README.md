@@ -126,3 +126,12 @@ il faut que l`on fasse un point avant la fin de semaine
 - essayer d integrer Simpsonen lieu et place de MeijerG sinon juste prendre MeijerG et Simpson et les comparer juste T vs Freq pour 2 bh et 1 ts pour observer la precision entre les 2
 - pour Tfilm mince essayer de le comprendre mais on reprend ca le 3 ensemble.
 
+---------------
+
+04/01/2023
+- La rédaction du rapport a bien avancée
+- Courbes 2D étudiées en cas extrême
+- Pour Simpson, comment recupérer le code de simpson_rule_MAIN3 afin de l'insérer dans f_u_vec et ainsi vectoriser le résultat à la place de MeijerG?
+
+Rizlaine ZAROUAL MAIN3
+
