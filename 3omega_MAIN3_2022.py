@@ -5,11 +5,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
-%matplotlib qt
+#matplotlib qt
 
 
-# pip install matplotlib
-# pip install numpy
+#pip install matplotlib
+#pip install numpy
 
 # x = np.arange(0,4*np.pi,0.1)   # start,stop,step
 # y = np.sin(x)
@@ -40,6 +40,43 @@ ts = np.array([350e-6, 400e-6])                         # epaisseur du substrat
 bh = np.array([5e-6, 10e-6, 20e-6])      #demi largeur du resistor
 frequence = np.arange(1, 1000, 200)          #domaine d`étude frequentiel
 
+# interval d`integration de l`integrale et definition du pas pour Simpson
+y_0 = 1e-10
+y_inf = 1   # suffisant à `mais prendre n grand
+n = 10000 * y_inf
+h = (y_inf - y_0) / (n-1) 
+print("h parameter: ", h)
+y_points = np.linspace(y_0, y_inf, n)  
+print("Number of points: ", len(y_points))
+
+#gamme de frequence
+start_f = -3
+end_f = 7
+points_f = 1000
+frequency = np.logspace(start_f, end_f, points_f) #différent de "frequence" qui est la variable qu'on utilise pour intégrer meijerg
+print("Number of frequency: ", len(frequency))
+
+#integration
+simpon_points = []
+for freq in omega:
+    print("Omega sweep: {:.4f}rad/s / {:.4f}rad/s, {:.4f}%".format(freq, max(omega), freq/max(omega)*100))
+    numeric_points = []
+    for y in y_points:
+        if y == 0:
+            print("Zero in the denominator")
+        else:
+            T = PD * (np.sin(y)**2) / (y**2 * cmath.sqrt(y**2 + freq * 1j))
+            # T = (np.sin(y)**2) / (y**2 * cmath.sqrt(y**2 + freq * 1j))
+            numeric_points.append(T)
+    simpson = (h/3) * (numeric_points[0] + 2*sum(numeric_points[2:n-2:2]) + 4*sum(numeric_points[1:n-1:2]) + numeric_points[n-1])
+    simpon_points.append(simpson)
+
+# x = frequency
+x = omega
+y_real = np.real(simpon_points)
+y_imag = np.imag(simpon_points)
+#fin définition simpson
+
 # Cartesian product of input variables
 idx = pd.MultiIndex.from_product([bh, ts, frequence], names=["bh", "ts", "frequence"])
 # print(idx)
@@ -57,7 +94,7 @@ def f_u(omega_elem):
      
     asympt = (P / (k*L*math.pi)) * (-(1 / 2) * np.log(omega_elem) + 3 / 2 - gamma - j * ((math.pi) / 4))
 
-    #ajouter fonctions exacxtes calculée en fonction de MeijerG ou Simpson
+    #soit remplacer meijerg par simpson soit faire les deux pour comparer directement sur le même code?
     # meijerg
     val1 = (-j*P / (4*L*k*math.pi * omega_elem)) * meijerg([[1, 3 / 2], []], [[1, 1], [0.5, 0]], j * omega_elem)  #solution approximée via fnction MeijerG on recupere reel et imaginaire
 
