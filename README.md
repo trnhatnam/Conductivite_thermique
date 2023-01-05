@@ -135,3 +135,6 @@ il faut que l`on fasse un point avant la fin de semaine
 
 Rizlaine ZAROUAL MAIN3
 
+----------------
+05/01/2023
+- Ajout de meijerg_only.py et simpson_only.py pour la comparaison meijerg/simpson L'objectif est de créer un csv pour meijerg et un csv pour simpson puis comparer les résultats.
