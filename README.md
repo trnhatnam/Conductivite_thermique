@@ -137,4 +137,4 @@ Rizlaine ZAROUAL MAIN3
 
 ----------------
 05/01/2023
-- Ajout de meijerg_only.py et simpson_only.py pour la comparaison meijerg/simpson L'objectif est de créer un csv pour meijerg et un csv pour simpson puis comparer les résultats.
+- Ajout de meijerg_only.py et simpson_only.py pour la comparaison meijerg/simpson L'objectif est de créer un csv pour meijerg et un csv pour simpson puis comparer les résultats. (TRINH Nhat-nam MAIN3)
