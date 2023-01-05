@@ -5,21 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
-#matplotlib qt
-
-
-#pip install matplotlib
-#pip install numpy
-
-# x = np.arange(0,4*np.pi,0.1)   # start,stop,step
-# y = np.sin(x)
-# z = np.cos(x)
-# plt.plot(x,y,x,z)
-# plt.xlabel('x values from 0 to 4pi')  # string must be enclosed with quotes '  '
-# plt.ylabel('sin(x) and cos(x)')
-# plt.title('Plot of sin and cos from 0 to 4pi')
-# plt.legend(['sin(x)', 'cos(x)'])      # legend entries as seperate strings in a list
-# plt.show()
 
 
 # parametres de calcul 3 Omega
@@ -39,7 +24,7 @@ gamma = 0.5772  #constante d`Euler
 ts = np.array([350e-6, 400e-6])                         # epaisseur du substrat
 bh = np.array([5e-6, 10e-6, 20e-6])      #demi largeur du resistor
 frequence = np.arange(1, 1000, 200)          #domaine d`étude frequentiel
-
+"""
 # interval d`integration de l`integrale et definition du pas pour Simpson
 y_0 = 1e-10
 y_inf = 1   # suffisant à `mais prendre n grand
@@ -76,7 +61,7 @@ x = omega
 y_real = np.real(simpon_points)
 y_imag = np.imag(simpon_points)
 #fin définition simpson
-
+"""
 # Cartesian product of input variables
 idx = pd.MultiIndex.from_product([bh, ts, frequence], names=["bh", "ts", "frequence"])
 # print(idx)
