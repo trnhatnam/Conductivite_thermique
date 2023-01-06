@@ -33,8 +33,8 @@ from matplotlib import rc
 ########################
 
 # PROPRIETES DU MATERIAU
-D = 2.67e-7                                # Thermal diffusivity. 1.14e-3 diamond diffusivity, 200 -1000 e-8 for BN - CNT D = 4.6e-4, 0.025e4 polymers PVP aqueous, 1.3e-7
-k = 0.55                                     # Thermal conductivity. Unit: W/mK (Diamond - 220 - 420 for BN) CNT 750 W/mK  or from 50 to 80 W/mK, 2000 W/mK, 0.27 PVP
+D = 8.8e-5                               # Thermal diffusivity. 1.14e-3 diamond diffusivity, 200 -1000 e-8 for BN - CNT D = 4.6e-4, 0.025e4 polymers PVP aqueous, 1.3e-7
+k = 140                                     # Thermal conductivity. Unit: W/mK (Diamond - 220 - 420 for BN) CNT 750 W/mK  or from 50 to 80 W/mK, 2000 W/mK, 0.27 PVP
 gamma = 0.5772                              # Euler constant
 V0 = 1                                      # Fundamental peak value
 R0 = 80                                     # Room temp resistance of the heater
@@ -45,7 +45,7 @@ P = V0**2/R0                         # W/m power per unit length
 # VARIABLES
 start_f = -3
 end_f = 7
-points_f = 100
+points_f = 10000
 frequency = np.logspace(start_f, end_f, points_f)                 # Frequency range f
 # bh = np.array([5e-6, 10e-6, 15e-6, 20e-6])              # Heater half width bh
 bh = np.array([5e-6])              # Heater half width bh
@@ -91,11 +91,6 @@ df['Thermal_freq'] = thermal_freq       # Insert thermal frequency into data fra
 df["Re"] = np.real(tup[0])              # Insert val1 real part into data frame
 df["Im"] = np.imag(tup[0])              # Insert val1 imagine part into data frame
 
-plt.semilogx(df["Thermal_freq"], df["Re"])
-plt.show()
 
-# sauvegarde des resultats dans un fichier .csv generé selon bh
-for bh_elem in bh:
-    fname = f"bh={bh_elem:.4e}.csv"
-    df_save = df[(df["bh"] == bh_elem)]
-    df_save.to_csv(fname)
+# sauvegarde des resultats dans un fichier .csv generé (juste pour test)
+df.to_csv("meijerg_only.csv")
