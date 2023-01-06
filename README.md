@@ -139,3 +139,10 @@ Rizlaine ZAROUAL MAIN3
 05/01/2023
 - Ajout de meijerg_only.py et simpson_only.py pour la comparaison meijerg/simpson L'objectif est de créer un csv pour meijerg et un csv pour simpson puis comparer les résultats. (TRINH Nhat-nam MAIN3)
 - commentaire: oui mais il faut superposer les 2 methodes pour comparer l`erreur: l`objectif est de deternminer la methode pertinente ou au contraire conclure qu`elles se valent
+
+-------------
+06/01/23
+
+Oui, l'étape suivante est de créer un programme qui extrait les données des 2 csv et qui compare les données. J'ai réecrit l'intégration simpson pour que 
+le calcul soit plus rapide (en vectorisant les calculs). J'ai les mêmes résultats que le programme simpson précédent. 
+
