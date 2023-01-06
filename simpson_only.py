@@ -43,7 +43,7 @@ L = 0.002
 PD = P/(np.pi * k) # Power density
 
 def f(freq,y):
-    return (PD/L) * (np.sin(y)**2) / (y**2 * np.sqrt(y**2 + freq * 1j))
+    return (PD/L) * (np.sin(y)**2) / (y**2 * np.emath.sqrt(y**2 + freq * 1j))
 
 #integration
 simpson_points = np.zeros(omega.size)
