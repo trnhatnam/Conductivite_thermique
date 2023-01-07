@@ -43,9 +43,9 @@ L = 0.002                                   # Length of the heater
 P = V0**2/(2*R0)                            # W/m power per unit length
 
 # VARIABLES
-frequency = np.arange(1, 100000, 1000)                  # Frequency range f
+frequency = np.logspace(0,6,num=20, endpoint=True)                # Frequency range f
 # bh = np.array([5e-6, 10e-6, 15e-6, 20e-6])              # Heater half width bh
-bh = np.array([5e-6, 10e-6])              # Heater half width bh
+bh = np.array([100e-6])              # Heater half width bh
 
 ts = np.array([350e-6])                                 # Substrate thickness ts
 linear_limit = 25*D/(4*(math.pi)*(ts**2))               # Limits linear regimes
