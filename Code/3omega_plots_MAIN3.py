@@ -10,42 +10,24 @@ from matplotlib.ticker import FuncFormatter
 import matplotlib.ticker
 from matplotlib import rc
 
-# An instance of RcParams for handling default Matplotlib values.
-# params = {
-#     'figure.figsize': [16, 9],
-#     'axes.labelsize' : 12,
-#     'figure.autolayout': True,
-#     'mathtext.rm': 'Times New Roman',
-#     'font.family': 'Times New Roman',
-#     'font.serif': "Times New Roman",
-#     }
-# matplotlib.rcParams.update(params)
-
-# Resolution complex number
-# mp.dps = 15                                 # Mpmath setting, dps is the decimal precision
-# mp.pretty = True                            # Setting the mp.pretty option will use the str()-style output for repr() as well
-# a = mpf(0.25)                               # a = 0.25
-# b = mpf(0.25)                               # b = 0.25
-# z = mpf(0.75)                               # z = 0.25
-
 ########################
 # PARAMETRAGE DU MODELE#
 ########################
-
+# rechercher :  silicium (D = 8.8e-5, k=140 W/mk)
 # PROPRIETES DU MATERIAU
-D = 1.3e-7                                 # Thermal diffusivity. 1.14e-3 diamond diffusivity, 200 -1000 e-8 for BN - CNT D = 4.6e-4, 0.025e4 polymers PVP aqueous, 1.3e-7
-k = 0.3                                     # Thermal conductivity. Unit: W/mK (Diamond - 220 - 420 for BN) CNT 750 W/mK  or from 50 to 80 W/mK, 2000 W/mK, 0.27 PVP
+D =  8.8e-5                         # Thermal diffusivity. 1.14e-3 diamond diffusivity, 200 -1000 e-8 for BN - CNT D = 4.6e-4, 0.025e4 polymers PVP aqueous, 1.3e-7
+k = 140                             # Thermal conductivity. Unit: W/mK (Diamond - 220 - 420 for BN) CNT 750 W/mK  or from 50 to 80 W/mK, 2000 W/mK, 0.27 PVP, 
 gamma = 0.5772                              # Euler constant
 V0 = 1                                      # Fundamental peak value
 R0 = 80                                     # Room temp resistance of the heater
 TCR = 0.00253                               # Temperature Coefficient of the electrical Resistivity (TRC), usually in the ~10^-3 /K. (Au TCR = 0.002535 /K)
 L = 0.002                                   # Length of the heater
-P = V0**2/(2*R0)                            # W/m power per unit length
+P = V0**2/(R0)                            # W/m power per unit length
 
 # VARIABLES
-frequency = np.logspace(0,6,num=20, endpoint=True)                # Frequency range f
+frequency = np.logspace(0, 6, num=12, endpoint=True)                 # Frequency range f
 # bh = np.array([5e-6, 10e-6, 15e-6, 20e-6])              # Heater half width bh
-bh = np.array([100e-6])              # Heater half width bh
+bh = np.array([5e-6, 10e-6])              # Heater half width bh
 
 ts = np.array([350e-6])                                 # Substrate thickness ts
 linear_limit = 25*D/(4*(math.pi)*(ts**2))               # Limits linear regimes
@@ -103,8 +85,6 @@ for bh_elem in bh:
     df_save = df[(df["bh"] == bh_elem)]
     df_save.to_csv(fname)
 
-fig, axs = plt.subplots(2,2)                      # figure 2x2 -  4 graphs
-
 # Code couleur pour les courbes
 colours = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 columns = ['frequency', 'Thermal_freq']
@@ -114,202 +94,288 @@ linestyles = ['-', '--', '-.', ':', 'None', ' ', '', 'solid', 'dashed', 'dashdot
 # graduation mineures et majeures
 locmaj = matplotlib.ticker.LogLocator(base=10.0, subs=(1, ),numticks=100)
 locmin = matplotlib.ticker.LogLocator(base=10.0,subs=np.arange(2, 10) * .1,numticks=100)
-for i in range(2):
-    ########################
-    # Plot Column 1 Figure #
-    ########################
-    axs[i, 0].tick_params(which="both", axis="both",direction="in")
-    axs[i, 0].minorticks_on()                                               # Display minor ticks on the axes.
-    axs[i, 0].set_ylabel('<T> (K)')                                         # Set the y-axis label
-    axs[i, 0].set_xlabel(xlabels[i])                                        # Set the bottom x-axis label
-    axs[i, 0].set_xscale('log')                                             # Set the bottom x-axis in log scale
-    axs[i, 0].xaxis.set_major_locator(locmaj)
-    axs[i, 0].xaxis.set_minor_locator(locmin)
-    axs[i, 0].xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-    axs[i, 0].margins(x=0)
-    axs_top1 = axs[i, 0].twiny()                                            # Create a twin Axes sharing the y-axis.
-    axs_top1.invert_xaxis()                                                 # Invert the top x-axis.
-    axs_top1.tick_params(which="both", axis="both",direction="in")
-    axs_top1.set_xticks(df['T_depth'])                                      # Set the top x-axis' tick locations.
-    axs_top1.set_xscale('log')                                              # Set the top x-axis in log scale
-            # labelpad=10)
-    # axs_top1.set_xlabel(
-    #     'Thermal penetration depth: q$^\mathrm{-1}$ = (2D/\u03C9$_\mathrm{t}$)$^\mathrm{1/2}$' + ' (\u03BCm)', 
-    #     labelpad=10)   
-    axs_top1.xaxis.set_major_locator(locmaj)
-    axs_top1.xaxis.set_minor_locator(locmin)
-    axs_top1.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-    axs_top1.margins(x=0)
+fig = plt.figure()
+ax1 = fig.add_subplot(121)
 
-    for axis in [axs[i, 0].xaxis, axs[i, 0].yaxis, axs_top1.xaxis, axs_top1.yaxis]:
-        formatter = FuncFormatter(lambda x, _: '{:.10g}'.format(x))
-        axis.set_major_formatter(formatter)
+########################
+# Figure 1 #
+########################
+
+### ax1
+ax1.tick_params(which="both", axis="both",direction="in")
+ax1.minorticks_on()                                               # Display minor ticks on the axes.
+ax1.set_ylabel('<T> (K)')                                         # Set the y-axis label
+ax1.set_xlabel(xlabels[0])                                        # Set the bottom x-axis label
+ax1.set_xscale('log')                                             # Set the bottom x-axis in log scale
+ax1.xaxis.set_major_locator(locmaj)
+ax1.xaxis.set_minor_locator(locmin)
+ax1.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+ax1.margins(x=0)
+axs_top1 = ax1.twiny()                                            # Create a twin Axes sharing the y-axis.
+axs_top1.invert_xaxis()                                                 # Invert the top x-axis.
+axs_top1.tick_params(which="both", axis="both",direction="in")
+axs_top1.set_xlabel('Thermal penetration depth: q$^\mathrm{-1}$ = (2D/\u03C9$_\mathrm{t}$)$^\mathrm{1/2}$' + ' (\u03BCm)', labelpad=10)
+axs_top1.set_xticks(df['T_depth'])                                      # Set the top x-axis' tick locations.
+axs_top1.set_xscale('log')                                              # Set the top x-axis in log scale
+axs_top1.xaxis.set_major_locator(locmaj)
+axs_top1.xaxis.set_minor_locator(locmin)
+axs_top1.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+axs_top1.margins(x=0)
+
+for axis in [ax1.xaxis, ax1.yaxis, axs_top1.xaxis, axs_top1.yaxis]:
+    formatter = FuncFormatter(lambda x, _: '{:.5g}'.format(x))
+    axis.set_major_formatter(formatter)
 
 
-    axs[i, 0].text(10, 0, r'Out-of-phase', fontsize=10)
-    axs[i, 0].text(10, 5, r'In-phase', fontsize=10)
+ax1.text(10, 0, r'Out-of-phase', fontsize=10)
+ax1.text(10, np.mean(df[(df["bh"] == bh[0]) & (df["ts"] == ts[0])]['Re']), r'In-phase', fontsize=10)
 
-    
-    for bh_array in bh:
-        # Re and Imag part vs Frequency and Thermal penetration depth
-        # Real part Vs Frequency, bh = to bh[1]
-        column = columns[i]
-        axs[i, 0].plot(
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])][column], 
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Re'], 
-            colours[np.where(bh == bh_array)[0][0]], 
-            label='bh=' + '{0:.1f}'.format((bh_array/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{0:.0f}'.format((ts[0]/1e-6)) + 'um')
-        # Real part Vs Thermal penetration depth, bh = to bh[1]
-        axs_top1.plot(
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['T_depth'], 
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Re'], 
-            colours[np.where(bh == bh_array)[0][0]], 
-            label='bh=' + '{0:.1f}'.format((bh_array/1e-6))   + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{0:.0f}'.format((ts[0]/1e-6)) + 'um')
 
-        # Imag part Vs Frequency, bh = to bh[1]
-        axs[i, 0].plot(
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])][column], 
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Im'], 
-            colours[np.where(bh == bh_array)[0][0]], 
-            label='_nolegend_')
-        # Imagine part Vs Thermal penetration depth, bh = to bh[1]
-        axs_top1.plot(
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['T_depth'], 
-            df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Im'], 
-            colours[np.where(bh == bh_array)[0][0]], 
-            label='_nolegend_')
+for bh_array in bh:
+    # Re and Imag part vs Frequency and Thermal penetration depth
+    # Real part Vs Frequency, bh = to bh[1]
+    column = columns[0]
+    ax1.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])][column], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Re'], 
+        colours[np.where(bh == bh_array)[0][0]], 
+        label='bh=' + '{0:.1f}'.format((bh_array/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{0:.0f}'.format((ts[0]/1e-6)) + 'um')
+    # Real part Vs Thermal penetration depth, bh = to bh[1]
+    axs_top1.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['T_depth'], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Re'], 
+        colours[np.where(bh == bh_array)[0][0]], 
+        label='bh=' + '{0:.1f}'.format((bh_array/1e-6))   + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{0:.0f}'.format((ts[0]/1e-6)) + 'um')
 
-    # Asympt Real part Vs frequency, bh = to bh[1], choose the larger number from the bh array
-    axs[i, 0].plot(
-        df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])][column], 
-        df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Asympt_Re'], 
-        color= 'black', 
-        linestyle='--',
-        label='bh=' + '{0:.1f}'.format((bh[bh.size-1]/1e-6)) + '\u03BCm -  ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um  (asympt)')
-    # Asympt Imagine part Vs Thermal penetration depth, bh = to bh[1], choose the larger number from the bh array
-    axs[i, 0].plot(
-        df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])][column], 
-        df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Asympt_Im'], 
-        color= 'black', 
-        linestyle='--',
+    # Imag part Vs Frequency, bh = to bh[1]
+    ax1.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])][column], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Im'], 
+        colours[np.where(bh == bh_array)[0][0]], 
         label='_nolegend_')
-    axs[i, 0].legend(loc='best', frameon=False, fontsize='8')
+    # Imagine part Vs Thermal penetration depth, bh = to bh[1]
+    axs_top1.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['T_depth'], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Im'], 
+        colours[np.where(bh == bh_array)[0][0]], 
+        label='_nolegend_')
 
-    ########################
-    # Plot Column 2 Figure #
-    ########################
-    if i == 0:
-        axs[i, 1].tick_params(which="both", axis="both",direction="in")
-        axs_top2 = axs[i, 1].twiny()
-        axs_top2.invert_xaxis()
-        axs_top2.tick_params(which="both", axis="both",direction="in")
-        axs[i, 1].minorticks_on()
+# Asympt Real part Vs frequency, bh = to bh[1], choose the larger number from the bh array
+ax1.plot(
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])][column], 
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Asympt_Re'], 
+    color= 'black', 
+    linestyle='--',
+    label='bh=' + '{0:.1f}'.format((bh[bh.size-1]/1e-6)) + '\u03BCm -  ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um  (asympt)')
+# Asympt Imagine part Vs Thermal penetration depth, bh = to bh[1], choose the larger number from the bh array
+ax1.plot(
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])][column], 
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Asympt_Im'], 
+    color= 'black', 
+    linestyle='--',
+    label='_nolegend_')
+ax1.legend(loc='best', frameon=False, fontsize='8')
 
-        # Plot the second figure
-        axs[i, 1].set_ylabel('Third harmonic voltage V3$_\mathrm{\u03C9}$ (V)')
-        axs[i, 1].set_xlabel('Thermal excitation frequency (Hz)')
-        axs[i, 1].set_xscale('log')
-        axs_top2.set_xticks(df['T_depth'])
-        axs_top2.set_xscale('log')
-        axs_top2.set_xlabel('Thermal penetration depth: q$^\mathrm{-1}$ = (2D/\u03C9$_\mathrm{t}$)$^\mathrm{1/2}$' + ' (\u03BCm)', labelpad=10)
-        axs[i, 1].xaxis.set_major_locator(locmaj)
-        axs_top2.xaxis.set_major_locator(locmaj)
-        axs[i, 1].xaxis.set_minor_locator(locmin)
-        axs_top2.xaxis.set_minor_locator(locmin)
-        axs[i, 1].xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-        axs_top2.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-        for axis in [axs[i, 1].xaxis, axs[i, 1].yaxis, axs_top2.xaxis, axs_top2.yaxis]:
-            formatter = FuncFormatter(lambda x, _: '{:.10g}'.format(x))
-            axis.set_major_formatter(formatter)
-        axs[i, 1].margins(x=0)
-        axs_top2.margins(x=0)
-        axs[i, 1].text(20, 0, r'Out-of-phase', fontsize=10)
-        axs[i, 1].text(20, 0.016, r'In-phase', fontsize=10)
 
-        for bh_array2 in bh:
-            # Re and Imag
-            # V3 omega Real part Vs Thermal Frequency, bh = to bh[1]
-            axs[i, 1].plot(
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['Thermal_freq'], 
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Re'], 
-                colours[np.where(bh == bh_array2)[0][0]], 
-                label='bh=' + '{:.1f}'.format((bh_array2/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
-            # V3 omega Real part Vs Thermal penetration depth, bh = to bh[1]
-            axs_top2.plot(
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['T_depth'], 
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Re'], 
-                colours[np.where(bh == bh_array2)[0][0]], 
-                label='bh=' + '{:.1f}'.format((bh_array2/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
-            # V3 omega Imagine part Vs Thermal Frequency, bh = to bh[1]
-            axs[i, 1].plot(
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['Thermal_freq'], 
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Im'], 
-                colours[np.where(bh == bh_array2)[0][0]], 
-                label='_nolegend_')
-            # V3 omega Imagine part Vs Thermal penetration depth, bh = to bh[1]
-            axs_top2.plot(
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['T_depth'], 
-                df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Im'], 
-                colours[np.where(bh == bh_array2)[0][0]], 
-                label='_nolegend_')
-        # V3asympt Real part Vs Thermal Frequency, bh = to bh[1]
-        axs[i, 1].plot(
-            df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Thermal_freq'], 
-            df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['V3asympt_Re'], 
-            color= 'black', 
-            linestyle='--',  
-            label='bh=' + '{0:.1f}'.format((bh[bh.size-1]/1e-6)) + '\u03BCm -  ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um (asympt)')
-        # V3asympt Imagine part Vs Thermal Frequency, bh = to bh[1]
-        axs[i, 1].plot(
-            df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Thermal_freq'], 
-            df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['V3asympt_Im'], 
-            color= 'black', 
-            linestyle='--', 
-            label='_nolegend_')
+### ax2 :
+    
+ax2 = fig.add_subplot(122)
+ax2.tick_params(which="both", axis="both",direction="in")
+ax2.minorticks_on()                                               # Display minor ticks on the axes.
+ax2.set_ylabel('<T> (K)')                                         # Set the y-axis label
+ax2.set_xlabel(xlabels[1])                                        # Set the bottom x-axis label
+ax2.set_xscale('log')                                             # Set the bottom x-axis in log scale
+ax2.xaxis.set_major_locator(locmaj)
+ax2.xaxis.set_minor_locator(locmin)
+ax2.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+ax2.margins(x=0)
+axs_top2 = ax2.twiny()                                            # Create a twin Axes sharing the y-axis.
+axs_top2.invert_xaxis()                                                 # Invert the top x-axis.
+axs_top2.tick_params(which="both", axis="both",direction="in")
+axs_top2.set_xlabel('Thermal penetration depth: q$^\mathrm{-1}$ = (2D/\u03C9$_\mathrm{t}$)$^\mathrm{1/2}$' + ' (\u03BCm)', labelpad=10)
+axs_top2.set_xticks(df['T_depth'])                                      # Set the top x-axis' tick locations.
+axs_top2.set_xscale('log')                                              # Set the top x-axis in log scale
+axs_top2.xaxis.set_major_locator(locmaj)
+axs_top2.xaxis.set_minor_locator(locmin)
+axs_top2.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+axs_top2.margins(x=0)
 
-        axs[i, 1].legend(loc='best', frameon=False, fontsize='8')
-    else:
-        axs[i, 1].tick_params(which="both", axis="both",direction="in")
-        axs_top3 = axs[i, 1].twinx()
-        axs_top3.tick_params(which="both", axis="both",direction="in")
-        # The fourth figure setting
-        axs[i, 1].set_ylabel('Amplitude', fontsize=12)
-        axs[i, 1].yaxis.label.set_color('blue')
-        axs[i, 1].tick_params(axis='y', colors='blue')
-        axs_top3.set_ylabel('Phase (${^o}$)', fontsize=12)
-        axs_top3.yaxis.label.set_color('red')
-        axs_top3.tick_params(axis='y', colors='red')
-        axs[i, 1].set_xlabel('Frequency (Hz)')
-        axs[i, 1].set_xscale('log')
-        axs[i, 1].xaxis.set_major_locator(locmaj)
-        axs[i, 1].xaxis.set_minor_locator(locmin)
-        for axis in [axs[i, 1].xaxis, axs[i, 1].yaxis]:
-            formatter = FuncFormatter(lambda x, _: '{:.16g}'.format(x))
-            axis.set_major_formatter(formatter)
-        axs[i, 1].margins(x=0)
-        axs_top3.margins(x=0)
-        
-        axs[i, 1].text(60, -3, r'Amplitude', color="blue", fontsize=10)
-        axs_top3.text(60, 0.45, r'Phase', color="red", fontsize=10)
+for axis in [ax2.xaxis, ax2.yaxis, axs_top2.xaxis, axs_top2.yaxis]:
+    formatter = FuncFormatter(lambda x, _: '{:.5g}'.format(x))
+    axis.set_major_formatter(formatter)
 
-        for bh_array3 in bh:
-            # Amplitude and phase
-            # Amplitude Vs Frequency, bh = to bh[1]
-            axs[i, 1].plot(
-                df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['frequency'], 
-                df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['Amplitude'], 
-                color= 'blue', 
-                linestyle=linestyles[np.where(bh == bh_array3)[0][0]],     
-                label='bh=' + '{:.0f}'.format((bh_array3/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
-            # Phase Vs Frequency, bh = to bh[1]
-            axs[i, 1].plot(
-                df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['frequency'], 
-                df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['Phase'], 
-                color= 'red', 
-                linestyle=linestyles[np.where(bh == bh_array3)[0][0]],      
-                label='bh=' + '{:.0f}'.format((bh_array3/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
 
-        axs[i, 1].legend(loc='best', frameon=False, fontsize='8')
-axs[0, 0].twiny().set_xlabel('Thermal penetration depth: q$^\mathrm{-1}$ = (2D/\u03C9$_\mathrm{t}$)$^\mathrm{1/2}$' + ' (\u03BCm)', labelpad=10)
+ax2.text(10, 0, r'Out-of-phase', fontsize=10)
+ax2.text(10, np.mean(df[(df["bh"] == bh[0]) & (df["ts"] == ts[0])]['Re']), r'In-phase', fontsize=10)
 
+
+for bh_array in bh:
+    # Re and Imag part vs Frequency and Thermal penetration depth
+    # Real part Vs Frequency, bh = to bh[1]
+    column = columns[1]
+    ax2.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])][column], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Re'], 
+        colours[np.where(bh == bh_array)[0][0]], 
+        label='bh=' + '{0:.1f}'.format((bh_array/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{0:.0f}'.format((ts[0]/1e-6)) + 'um')
+    # Real part Vs Thermal penetration depth, bh = to bh[1]
+    axs_top2.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['T_depth'], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Re'], 
+        colours[np.where(bh == bh_array)[0][0]], 
+        label='bh=' + '{0:.1f}'.format((bh_array/1e-6))   + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{0:.0f}'.format((ts[0]/1e-6)) + 'um')
+
+    # Imag part Vs Frequency, bh = to bh[1]
+    ax2.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])][column], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Im'], 
+        colours[np.where(bh == bh_array)[0][0]], 
+        label='_nolegend_')
+    # Imagine part Vs Thermal penetration depth, bh = to bh[1]
+    axs_top2.plot(
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['T_depth'], 
+        df[(df["bh"] == bh_array) & (df["ts"] == ts[0])]['Im'], 
+        colours[np.where(bh == bh_array)[0][0]], 
+        label='_nolegend_')
+
+# Asympt Real part Vs frequency, bh = to bh[1], choose the larger number from the bh array
+ax2.plot(
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])][column], 
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Asympt_Re'], 
+    color= 'black', 
+    linestyle="--",
+    label='bh=' + '{0:.1f}'.format((bh[bh.size-1]/1e-6)) + '\u03BCm -  ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um  (asympt)')
+# Asympt Imagine part Vs Thermal penetration depth, bh = to bh[1], choose the larger number from the bh array
+ax2.plot(
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])][column], 
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Asympt_Im'], 
+    color= 'black', 
+    linestyle="--",
+    label='_nolegend_')
+ax2.legend(loc='best', frameon=False, fontsize='8')
+
+
+
+########################
+# Figure 2 #
+########################
+
+### ax21
+fig2 = plt.figure()
+ax21 = fig2.add_subplot(121)
+
+ax21.tick_params(which="both", axis="both",direction="in")
+axs_top21 = ax21.twiny()
+axs_top21.invert_xaxis()
+axs_top21.tick_params(which="both", axis="both",direction="in")
+ax21.minorticks_on()
+
+# Plot the second figure
+ax21.set_ylabel('Third harmonic voltage V3$_\mathrm{\u03C9}$ (V)')
+ax21.set_xlabel('Thermal excitation frequency (Hz)')
+ax21.set_xscale('log')
+axs_top21.set_xticks(df['T_depth'])
+axs_top21.set_xscale('log')
+axs_top21.set_xlabel('Thermal penetration depth: q$^\mathrm{-1}$ = (2D/\u03C9$_\mathrm{t}$)$^\mathrm{1/2}$' + ' (\u03BCm)', labelpad=10)
+ax21.xaxis.set_major_locator(locmaj)
+axs_top21.xaxis.set_major_locator(locmaj)
+ax21.xaxis.set_minor_locator(locmin)
+axs_top21.xaxis.set_minor_locator(locmin)
+ax21.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+axs_top21.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+for axis in [ax21.xaxis, ax21.yaxis, axs_top21.xaxis, axs_top21.yaxis]:
+    formatter = FuncFormatter(lambda x, _: '{:.5g}'.format(x))
+    axis.set_major_formatter(formatter)
+ax21.margins(x=0)
+axs_top21.margins(x=0)
+ax21.text(20, 0, r'Out-of-phase', fontsize=10)
+ax21.text(20, np.mean(df[(df["bh"] == bh[0]) & (df["ts"] == ts[0])]['V3_Re']), r'In-phase', fontsize=10)
+
+for bh_array2 in bh:
+    # Re and Imag
+    # V3 omega Real part Vs Thermal Frequency, bh = to bh[1]
+    ax21.plot(
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['Thermal_freq'], 
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Re'], 
+        colours[np.where(bh == bh_array2)[0][0]], 
+        label='bh=' + '{:.1f}'.format((bh_array2/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
+    # V3 omega Real part Vs Thermal penetration depth, bh = to bh[1]
+    axs_top21.plot(
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['T_depth'], 
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Re'], 
+        colours[np.where(bh == bh_array2)[0][0]], 
+        label='bh=' + '{:.1f}'.format((bh_array2/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
+    # V3 omega Imagine part Vs Thermal Frequency, bh = to bh[1]
+    ax21.plot(
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['Thermal_freq'], 
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Im'], 
+        colours[np.where(bh == bh_array2)[0][0]], 
+        label='_nolegend_')
+    # V3 omega Imagine part Vs Thermal penetration depth, bh = to bh[1]
+    axs_top21.plot(
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['T_depth'], 
+        df[(df["bh"] == bh_array2) & (df["ts"] == ts[0])]['V3_Im'], 
+        colours[np.where(bh == bh_array2)[0][0]], 
+        label='_nolegend_')
+# V3asympt Real part Vs Thermal Frequency, bh = to bh[1]
+ax21.plot(
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Thermal_freq'], 
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['V3asympt_Re'], 
+    color= 'black', 
+    linestyle='--',  
+    label='bh=' + '{0:.1f}'.format((bh[bh.size-1]/1e-6)) + '\u03BCm -  ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um (asympt)')
+# V3asympt Imagine part Vs Thermal Frequency, bh = to bh[1]
+ax21.plot(
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['Thermal_freq'], 
+    df[(df["bh"] == bh[bh.size-1]) & (df["ts"] == ts[0])]['V3asympt_Im'], 
+    color= 'black', 
+    linestyle='--', 
+    label='_nolegend_')
+
+ax21.legend(loc='best', frameon=False, fontsize='8')
+
+
+#### ax22
+ax22 = fig2.add_subplot(122)
+ax22.tick_params(which="both", axis="both",direction="in")
+axs_top3 = ax22.twinx()
+axs_top3.tick_params(which="both", axis="both",direction="in")
+# The fourth figure setting
+ax22.set_ylabel('Amplitude', fontsize=12)
+ax22.yaxis.label.set_color('blue')
+ax22.tick_params(axis='y', colors='blue')
+axs_top3.set_ylabel('Phase (${^o}$)', fontsize=12)
+axs_top3.yaxis.label.set_color('red')
+axs_top3.tick_params(axis='y', colors='red')
+ax22.set_xlabel('Frequency (Hz)')
+ax22.set_xscale('log')
+ax22.xaxis.set_major_locator(locmaj)
+ax22.xaxis.set_minor_locator(locmin)
+for axis in [ax22.xaxis, ax22.yaxis]:
+    formatter = FuncFormatter(lambda x, _: '{:.16g}'.format(x))
+    axis.set_major_formatter(formatter)
+ax22.margins(x=0)
+axs_top3.margins(x=0)
+
+ax22.text(60, np.min(df[(df["bh"] == bh[0]) & (df["ts"] == ts[0])]['Amplitude'])-2, r'Amplitude', color="blue", fontsize=10)
+ax22.text(60, np.mean(df[(df["bh"] == bh[0]) & (df["ts"] == ts[0])]['Phase']), r'Phase', color="red", fontsize=10)
+
+for bh_array3 in bh:
+    # Amplitude and phase
+    # Amplitude Vs Frequency, bh = to bh[1]
+    ax22.plot(
+        df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['frequency'], 
+        df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['Amplitude'], 
+        color= 'blue', 
+        linestyle=linestyles[np.where(bh == bh_array3)[0][0]],     
+        label='bh=' + '{:.0f}'.format((bh_array3/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
+    #Phase Vs Frequency, bh = to bh[1]
+    ax22.plot(
+        df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['frequency'], 
+        df[(df["bh"] == bh_array3) & (df["ts"] == ts[0])]['Phase'], 
+        color= 'red', 
+        linestyle=linestyles[np.where(bh == bh_array3)[0][0]],      
+        label='bh=' + '{:.0f}'.format((bh_array3/1e-6)) + '\u03BCm - ' + r't$_{\rm s}$' + ' = ' + '{:.0f}'.format((ts[0]/1e-6)) + 'um')
+
+ax22.legend(loc='best', frameon=False, fontsize='8')
 plt.show()
