@@ -146,5 +146,8 @@ Rizlaine ZAROUAL MAIN3
 Oui, l'étape suivante est de créer un programme qui extrait les données des 2 csv et qui compare les données. J'ai réecrit l'intégration simpson pour que 
 le calcul soit plus rapide (en vectorisant les calculs). J'ai les mêmes résultats que le programme simpson précédent. 
 
-J'ajoute aussi qu'il y a une erreur dans le code dans l'ancien programme de Simpson : on a mis la puissance au lieu de la puissance linéique. Cela explique pourquoi les résultats de meijerg et simpson soient très différents.
+J'ajoute aussi qu'il y a une erreur dans le code dans l'ancien programme de Simpson : on a mis la puissance au lieu de la puissance linéique. Cela explique pourquoi les résultats de meijerg et simpson soient très différents. 
+
+Update 07/01/23 : 3omega_plots.py a été mis à jour pour qu'il y ait 2 fenêtres. Les textes sur les graphes ont été corrigés aussi. (TRINH Nhat-nam MAIN3)
+
 
