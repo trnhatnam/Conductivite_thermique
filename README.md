@@ -1,4 +1,18 @@
-# Conductivite_thermique
+# Projet multidisciplinaire Polytech 3 - MAIN (2022-2023) : Mesure de la conductivité thermique de matériaux submicroniques avec la méthode des 3-omega
+
+Les codes importants sont :
+- 3omega_plots_MAIN.py (dans le dossier Code) : vous pouvez changer les paramètres du substrat et de l'installation en changeant les variables au début du programme
+
+- thinfilmsSiN100nm.py et thinfilmsSiN50nm.py : les paramètres ne doivent pas être changés car le programme extrait les données d'une expérience pratique dans un fichier tableau
+
+- comparaison.py, meijerg_only.py, simpson_only.py (dans le dossier Comparaison_meijerg_simpson) : 
+* lancer meijerg_only.py et simpson_only.py avec les mêmes paramètres (cf variables)
+* lancer comparaison.py
+
+
+En dessous, vous trouverez les échanges entre les élèves et l'encadrant pendant l'avancement du projet.
+
+-------------------
 
 15/11/2022
 Bonjour,
