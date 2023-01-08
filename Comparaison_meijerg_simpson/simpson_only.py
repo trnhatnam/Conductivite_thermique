@@ -46,7 +46,7 @@ def f(freq,y):
     return (PD/L) * (np.sin(y)**2) / (y**2 * np.emath.sqrt(y**2 + freq * 1j))
 
 #integration
-simpson_points = np.zeros(omega.size)
+simpson_points = np.zeros(omega.size, dtype=complex)
 for i in range(omega.size):
     freq = omega[i]
     print("Omega sweep: {:.4f}rad/s / {:.4f}rad/s, {:.4f}%".format(freq, max(omega), freq/max(omega)*100))
