@@ -8,7 +8,7 @@ Les codes importants sont :
 - thinfilmsSiN100nm.py et thinfilmsSiN50nm.py : les paramètres ne doivent pas être changés car le programme extrait les données d'une expérience pratique dans un fichier tableau. Il suffit que les fichiers SiN100nm.xlsx et SiN50nm.xlsx soient dans le même dossier que les codes pour que les codes s'éxecutent correctement.
 
 - comparaison.py, meijerg_only.py, simpson_only.py (dans le dossier Comparaison_meijerg_simpson) :
---1/ lancer meijerg_only.py et simpson_only.py avec les mêmes paramètres (cf variables) pour créer les csv (à noter que vous pouvez changer les paramètres du modèle mais pour la comparaison il faut mettre les mêmes paramètres);
---2/ une fois les csv crées vous pouvez lancer comparaison.py
+-- 1/ lancer meijerg_only.py et simpson_only.py avec les mêmes paramètres (cf variables) pour créer les csv (à noter que vous pouvez changer les paramètres du modèle mais pour la comparaison il faut mettre les mêmes paramètres);
+-- 2/ une fois les csv crées vous pouvez lancer comparaison.py
 
--
+- echange_avec_avancement.txt : si vous voulez voir les échanges avec l'encadrant sur l'avancement du projet
