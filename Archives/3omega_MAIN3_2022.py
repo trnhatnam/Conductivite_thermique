@@ -130,30 +130,27 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.set_xlabel('frequence électrique en Hz')
 ax.set_ylabel('température en K')
-ax.set_zlabel('t_depth en µm')
+ax.set_zlabel('ts en µm')
 ax.invert_zaxis()
 ax.margins(x=0)
-for b in bh:  
-    # partie reel
-    ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
-            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
-            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
-            linewidth=0.75, 
-            zdir="z",
-            label="b="+str(b),
-            color = cl[np.where(bh == b)[0][0]])
-    # partie imaginaire
-    ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
-                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
-                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+for t in ts:
+    for b in bh:  
+        # partie reel
+        ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
+                df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
                 linewidth=0.75, 
-                zdir="z",
-                linestyle='--',
-                color=cl[np.where(bh == b)[0][0]])
+                zs=t,
+                label="b="+str(b),
+                color = cl[np.where(bh == b)[0][0]])
+        # partie imaginaire
+        ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
+                    df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
+                    linewidth=0.75, 
+                    zs=t,
+                    linestyle='--',
+                    color=cl[np.where(bh == b)[0][0]])
 
-ax.get_proj = lambda: np.dot(Axes3D.get_proj(ax), np.diag([1.15, 1.15, 1.15, 1]))
-
-ax.set_title('Température vs fréquence électrique vs T_depth')
+ax.set_title('Température vs fréquence électrique vs ts')
 ax.legend()
 plt.show()
 
@@ -162,30 +159,28 @@ fig1 = plt.figure()
 ax1 = fig1.add_subplot(111, projection='3d')
 ax1.set_xlabel('frequence thermique en Hz')
 ax1.set_ylabel('température en K')
-ax1.set_zlabel('t_depth en µm')
+ax1.set_zlabel('ts en µm')
 ax1.invert_zaxis()
 ax1.margins(x=0)
-for b in bh:  
-    # partie reel
-    ax1.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
-            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
-            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
-            linewidth=0.75, 
-            zdir="z",
-            label="b="+str(b),
-            color = cl[np.where(bh == b)[0][0]])
-    # partie imaginaire
-    ax1.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
-                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
-                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
+for t in ts:
+    for b in bh:  
+        # partie reel
+        ax1.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
+                df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
                 linewidth=0.75, 
-                zdir="z",
-                linestyle='--',
-                color=cl[np.where(bh == b)[0][0]])
+                zs=t,
+                label="b="+str(b),
+                color = cl[np.where(bh == b)[0][0]])
+        # partie imaginaire
+        ax1.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
+                    df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
+                    linewidth=0.75, 
+                    zs=t,
+                    linestyle='--',
+                    color=cl[np.where(bh == b)[0][0]])
 
-ax1.get_proj = lambda: np.dot(Axes3D.get_proj(ax1), np.diag([1.15, 1.15, 1.15, 1]))
 
-ax1.set_title('Température vs fréquence thermique vs T_depth')
+ax1.set_title('Température vs fréquence thermique vs ts')
 ax1.legend()
 plt.show()
 
@@ -201,38 +196,33 @@ for b in bh:
     # partie reel
     ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Re'],
             df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
-            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
             linewidth=0.75, 
-            zdir="z",
+            zs=t,
             label="V3_reel b="+str(b),
             color = cl[np.where(bh == b)[0][0]])
     ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Re'],
                 df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
-                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
                 linewidth=0.75, 
-                zdir="z",
+                zs=t,
                 linestyle='--',
                 color=cl[np.where(bh == b)[0][0]])
     # partie imaginaire
     ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Im'],
             df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
-            df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
             linewidth=0.75, 
-            zdir="z",
+            zs=t,
             label="V3_im b="+str(b),
             color = cl[np.where(bh == b)[0][0]+3])
     
     ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Im'],
                 df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
-                df[(df['bh'] == b)&(df['ts'] == t)]['T_depth'],
                 linewidth=0.75, 
-                zdir="z",
+                zs=t,
                 linestyle='--',
                 color=cl[np.where(bh == b)[0][0]+3])
 
-ax2.get_proj = lambda: np.dot(Axes3D.get_proj(ax2), np.diag([1.15, 1.15, 1.15, 1]))
 
-ax2.set_title('V3_omega vs fréquence thermique vs T_depth')
+ax2.set_title('V3_omega vs fréquence thermique vs ts')
 ax2.legend()
 plt.show()
 
