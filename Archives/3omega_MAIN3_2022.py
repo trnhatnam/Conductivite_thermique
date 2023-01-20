@@ -140,13 +140,14 @@ for t in ts:
                 df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
                 linewidth=0.75, 
                 zs=t,
-                label="b="+str(b),
+                label="re bh="+str(b) + " m " if t==ts[0] else "_nolegend_",
                 color = cl[np.where(bh == b)[0][0]])
         # partie imaginaire
         ax.plot(df[(df['bh'] == b)&(df['ts'] == t)]['frequence'],
                     df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
                     linewidth=0.75, 
                     zs=t,
+                    label="im bh="+str(b) + " m " if t==ts[0] else "_nolegend_",
                     linestyle='--',
                     color=cl[np.where(bh == b)[0][0]])
 
@@ -169,13 +170,14 @@ for t in ts:
                 df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
                 linewidth=0.75, 
                 zs=t,
-                label="b="+str(b),
+                label="re bh="+str(b) + " m " if t==ts[0] else "_nolegend_",
                 color = cl[np.where(bh == b)[0][0]])
         # partie imaginaire
         ax1.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
                     df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
                     linewidth=0.75, 
                     zs=t,
+                    label="im bh="+str(b) + " m " if t==ts[0] else "_nolegend_",
                     linestyle='--',
                     color=cl[np.where(bh == b)[0][0]])
 
@@ -192,34 +194,23 @@ ax2.set_ylabel('V3omega')
 ax2.set_zlabel('t_depth en µm')
 ax2.invert_zaxis()
 ax2.margins(x=0)
-for b in bh:  
-    # partie reel
-    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Re'],
-            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
-            linewidth=0.75, 
-            zs=t,
-            label="V3_reel b="+str(b),
-            color = cl[np.where(bh == b)[0][0]])
-    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Re'],
-                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
+for t in ts:
+    for b in bh:  
+        # partie reel
+        ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
+                df[(df['bh'] == b)&(df['ts'] == t)]['V3_Re'],
                 linewidth=0.75, 
                 zs=t,
-                linestyle='--',
-                color=cl[np.where(bh == b)[0][0]])
-    # partie imaginaire
-    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Im'],
-            df[(df['bh'] == b)&(df['ts'] == t)]["Re"], 
-            linewidth=0.75, 
-            zs=t,
-            label="V3_im b="+str(b),
-            color = cl[np.where(bh == b)[0][0]+3])
-    
-    ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['V3_Im'],
-                df[(df['bh'] == b)&(df['ts'] == t)]["Im"],
-                linewidth=0.75, 
-                zs=t,
-                linestyle='--',
-                color=cl[np.where(bh == b)[0][0]+3])
+                label="V3_reel bh="+str(b) + " m " if t==ts[0] else "_nolegend_",
+                color = cl[np.where(bh == b)[0][0]])
+        # imaginaire
+        ax2.plot(df[(df['bh'] == b)&(df['ts'] == t)]['Thermal_freq'],
+                    df[(df['bh'] == b)&(df['ts'] == t)]["V3_Im"],
+                    linewidth=0.75, 
+                    zs=t,
+                    label="V3_im bh="+str(b) + " m " if t==ts[0] else "_nolegend_",
+                    linestyle='--',
+                    color=cl[np.where(bh == b)[0][0]])
 
 
 ax2.set_title('V3_omega vs fréquence thermique vs ts')
